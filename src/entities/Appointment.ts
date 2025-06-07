@@ -1,18 +1,77 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Doctor } from './Doctor';
-import { Patient } from './Patient';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+} from "typeorm"
+import { IsNotEmpty, IsOptional, IsDateString, IsEnum } from "class-validator"
+import { Patient } from "./Patient"
+import { Doctor } from "./Doctor"
 
-@Entity()
+export enum AppointmentStatus {
+  SCHEDULED = "scheduled",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
+  NO_SHOW = "no_show",
+}
+
+@Entity("appointments")
 export class Appointment {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id!: string
+
+  @Column({ type: "timestamp" })
+  @IsNotEmpty({ message: "Appointment date and time is required" })
+  @IsDateString({}, { message: "Please provide a valid date and time" })
+  appointmentDateTime!: Date
+
+  @Column({ type: "text", nullable: true })
+  @IsOptional()
+  reason?: string
+
+  @Column({ type: "text", nullable: true })
+  @IsOptional()
+  notes?: string
+
+  @Column({
+    type: "enum",
+    enum: AppointmentStatus,
+    default: AppointmentStatus.SCHEDULED,
+  })
+  @IsEnum(AppointmentStatus, { message: "Invalid appointment status" })
+  status!: AppointmentStatus
+
+  @Column({ type: "int", default: 30 })
+  duration!: number // in minutes
+
+  @ManyToOne(
+    () => Patient,
+    (patient) => patient.appointments,
+    { onDelete: "CASCADE" },
+  )
+  @JoinColumn({ name: "patientId" })
+  patient!: Patient
 
   @Column()
-  date: Date;
+  patientId!: string
 
-  @ManyToOne(() => Doctor, (doctor) => doctor.appointments)
-  doctor: Doctor;
+  @ManyToOne(
+    () => Doctor,
+    (doctor) => doctor.appointments,
+    { onDelete: "CASCADE" },
+  )
+  @JoinColumn({ name: "doctorId" })
+  doctor!: Doctor
 
-  @ManyToOne(() => Patient, (paciente) => paciente.appointments)
-  patient: Patient;
+  @Column()
+  doctorId!: string
+
+  @CreateDateColumn()
+  createdAt!: Date
+
+  @UpdateDateColumn()
+  updatedAt!: Date
 }
