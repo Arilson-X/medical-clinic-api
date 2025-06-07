@@ -1,8 +1,8 @@
 import 'reflect-metadata'
 import { DataSource } from 'typeorm';
-import { Medico } from '../entities/Medico';
-import { Paciente } from '../entities/Patient';
-import { Agendamento } from '../entities/Agendamento';
+import { Doctor } from '../entities/Doctor';
+import { Patient } from '../entities/Patient';
+import { Appointment } from '../entities/Appointment';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -13,5 +13,5 @@ export const AppDataSource = new DataSource({
   database: 'clinica',
   synchronize: true,
   logging: false,
-  entities: [Medico, Paciente, Agendamento],
+  entities: [Doctor, Patient, Appointment],
 });
