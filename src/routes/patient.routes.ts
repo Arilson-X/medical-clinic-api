@@ -1,14 +1,14 @@
-import { Router } from 'express';
-import { AppDataSource } from '../database/data-source';
-import { Patient } from '../entities/Patient';
+import { Router } from "express"
+import { PatientController } from "../controllers/patient.controller"
 
-const router = Router();
+const router = Router()
+const patientController = new PatientController()
 
-router.post('/', async (req, res) => {
-    const repo = AppDataSource.getRepository(Patient);
-    const patient = repo.create(req.body);
-    await repo.save(patient);
-    return res.status(201).json(patient);
-});
+// Patient CRUD routes
+router.post("/", (req, res) => patientController.create(req, res))
+router.get("/", (req, res) => patientController.findAll(req, res))
+router.get("/:id", (req, res) => patientController.findOne(req, res))
+router.put("/:id", (req, res) => patientController.update(req, res))
+router.delete("/:id", (req, res) => patientController.delete(req, res))
 
-export default router;
+export default router

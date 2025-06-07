@@ -1,14 +1,18 @@
-import { Router } from 'express';
-import { AppDataSource } from '../database/data-source';
-import { Appointment } from '../entities/Appointment';
+import { Router } from "express"
+import { AppointmentController } from "../controllers/appointment.controller"
 
-const router = Router();
+const router = Router()
+const appointmentController = new AppointmentController()
 
-router.post('/', async (req, res) => {
-    const repo = AppDataSource.getRepository(Appointment);
-    const appointment = repo.create(req.body);
-    await repo.save(appointment);
-    return res.status(201).json(appointment);
-});
+// Appointment CRUD routes
+router.post("/", (req, res) => appointmentController.create(req, res))
+router.get("/", (req, res) => appointmentController.findAll(req, res))
+router.get("/:id", (req, res) => appointmentController.findOne(req, res))
+router.put("/:id", (req, res) => appointmentController.update(req, res))
+router.delete("/:id", (req, res) => appointmentController.delete(req, res))
 
-export default router;
+// Specific appointment queries
+router.get("/doctor/:doctorId", (req, res) => appointmentController.findByDoctor(req, res))
+router.get("/patient/:patientId", (req, res) => appointmentController.findByPatient(req, res))
+
+export default router
