@@ -5,29 +5,29 @@ import { Appointment } from "./Appointment"
 @Entity("patients")
 export class Patient {
   @PrimaryGeneratedColumn("uuid")
-  id!: string
+  id: string
 
   @Column()
   @IsNotEmpty({ message: "First name is required" })
   @Length(2, 50, { message: "First name must be between 2 and 50 characters" })
-  firstName!: string
+  firstName: string
 
   @Column()
   @IsNotEmpty({ message: "Last name is required" })
   @Length(2, 50, { message: "Last name must be between 2 and 50 characters" })
-  lastName!: string
+  lastName: string
 
   @Column({ unique: true })
   @IsEmail({}, { message: "Please provide a valid email address" })
-  email!: string
+  email: string
 
   @Column()
   @IsNotEmpty({ message: "Phone number is required" })
-  phone!: string
+  phone: string
 
   @Column({ type: "date" })
   @IsNotEmpty({ message: "Date of birth is required" })
-  dateOfBirth!: Date
+  dateOfBirth: Date
 
   @Column({ type: "text", nullable: true })
   @IsOptional()
@@ -41,11 +41,11 @@ export class Patient {
     () => Appointment,
     (appointment) => appointment.patient,
   )
-  appointments!: Appointment[]
+  appointments: Appointment[]
 
   @CreateDateColumn()
-  createdAt!: Date
+  createdAt: Date
 
   @UpdateDateColumn()
-  updatedAt!: Date
+  updatedAt: Date
 }

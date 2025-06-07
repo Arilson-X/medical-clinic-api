@@ -21,20 +21,20 @@ export enum AppointmentStatus {
 @Entity("appointments")
 export class Appointment {
   @PrimaryGeneratedColumn("uuid")
-  id!: string
+  id: string
 
   @Column({ type: "timestamp" })
   @IsNotEmpty({ message: "Appointment date and time is required" })
   @IsDateString({}, { message: "Please provide a valid date and time" })
-  appointmentDateTime!: Date
+  appointmentDateTime: Date
 
   @Column({ type: "text", nullable: true })
   @IsOptional()
-  reason?: string
+  reason: string
 
   @Column({ type: "text", nullable: true })
   @IsOptional()
-  notes?: string
+  notes: string
 
   @Column({
     type: "enum",
@@ -42,10 +42,10 @@ export class Appointment {
     default: AppointmentStatus.SCHEDULED,
   })
   @IsEnum(AppointmentStatus, { message: "Invalid appointment status" })
-  status!: AppointmentStatus
+  status: AppointmentStatus
 
   @Column({ type: "int", default: 30 })
-  duration!: number // in minutes
+  duration: number 
 
   @ManyToOne(
     () => Patient,
@@ -53,10 +53,10 @@ export class Appointment {
     { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "patientId" })
-  patient!: Patient
+  patient: Patient
 
   @Column()
-  patientId!: string
+  patientId: string
 
   @ManyToOne(
     () => Doctor,
@@ -64,14 +64,14 @@ export class Appointment {
     { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "doctorId" })
-  doctor!: Doctor
+  doctor: Doctor
 
   @Column()
-  doctorId!: string
+  doctorId: string
 
   @CreateDateColumn()
-  createdAt!: Date
+  createdAt: Date
 
   @UpdateDateColumn()
-  updatedAt!: Date
+  updatedAt: Date
 }

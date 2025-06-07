@@ -2,11 +2,12 @@ import "reflect-metadata"
 import express from "express"
 import cors from "cors"
 import helmet from "helmet"
-import { AppDataSource } from "./database/data-source"
+import { AppDataSource } from "./config/database"
 import { errorHandler } from "./middleware/error.handler"
 import patientRoutes from "./routes/patient.routes"
 import doctorRoutes from "./routes/doctor.routes"
 import appointmentRoutes from "./routes/appointment.routes"
+import authRoutes from "./routes/auth.routes"
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -20,6 +21,7 @@ app.use(express.json())
 app.use("/api/patients", patientRoutes)
 app.use("/api/doctors", doctorRoutes)
 app.use("/api/appointments", appointmentRoutes)
+app.use("/api/auth", authRoutes)
 
 // Health check
 app.get("/health", (req, res) => {
