@@ -16,4 +16,11 @@ export const AppDataSource = new DataSource({
   entities: [Patient, Doctor, Appointment, User],
   migrations: ["src/migrations/*.ts"],
   subscribers: ["src/subscribers/*.ts"],
+  connectTimeoutMS: 60000,
+  extra: {
+    max: 20,
+    min: 5,
+    acquire: 30000,
+    idle: 10000,
+  },
 })

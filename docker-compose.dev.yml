@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: medical-clinic-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-medical_clinic_dev}
+      POSTGRES_USER: ${DB_USERNAME:-u_teste_api}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-connect123!}
+    ports:
+      - "${DB_PORT:-5433}:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - medical-clinic-dev-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: medical-clinic-api-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres123}
+      DB_NAME: ${DB_NAME:-medical_clinic_dev}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-key}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      PORT: 3000
+    ports:
+      - "${API_PORT:-3001}:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+    networks:
+      - medical-clinic-dev-network
+
+volumes:
+  postgres_dev_data:
+    driver: local
+
+networks:
+  medical-clinic-dev-network:
+    driver: bridge

@@ -1,6 +1,6 @@
 # Medical Clinic API
 
-A RESTful API for managing a medical clinic built with Node.js, Express, TypeORM, and PostgreSQL with JWT authentication.
+A RESTful API for managing a medical clinic built with Node.js, Express, TypeORM, and PostgreSQL with JWT authentication. Fully containerized with Docker.
 
 ## Features
 
@@ -11,109 +11,329 @@ A RESTful API for managing a medical clinic built with Node.js, Express, TypeORM
 - **Data Validation**: Comprehensive input validation using class-validator
 - **Error Handling**: Proper error handling and meaningful error messages
 - **Database Relations**: Well-structured relationships between entities
+- **Docker Support**: Fully containerized application with Docker Compose
 
 ## Tech Stack
 
-- **Node.js** - Runtime environment
+- **Node.js 22** - Runtime environment
 - **Express.js** - Web framework
 - **TypeORM** - Object-Relational Mapping
-- **PostgreSQL** - Database
+- **PostgreSQL 15** - Database
 - **TypeScript** - Programming language
 - **JWT** - JSON Web Tokens for authentication
 - **bcryptjs** - Password hashing
 - **class-validator** - Validation library
+- **Docker** - Containerization
+- **Docker Compose** - Multi-container orchestration
 
-## Authentication
+## Quick Start with Docker
 
-The API uses JWT (JSON Web Token) for authentication. All endpoints except registration and login require a valid JWT token.
+### Prerequisites
+- Docker
+- Docker Compose
 
-### User Roles
+### 1. Clone and Setup
+\`\`\`bash
+git clone <repository-url>
+cd medical-clinic-api
+\`\`\`
 
-- **ADMIN**: Full access to all resources
-- **DOCTOR**: Can view patients, manage their own appointments
-- **PATIENT**: Can view their own data and create appointments
-- **RECEPTIONIST**: Can manage patients and appointments
+### 2. Environment Configuration
+\`\`\`bash
+# Copy environment template
+cp .env.docker .env
 
-## Installation
+# Edit .env file with your configuration
+nano .env
+\`\`\`
 
-1. Clone the repository
-2. Install dependencies:
-   \`\`\`bash
-   npm install
-   \`\`\`
+### 3. Start with Docker Compose
 
-3. Set up your PostgreSQL database
+#### Production Mode
+\`\`\`bash
+# Build and start containers
+make up
 
-4. Copy `.env.example` to `.env` and configure your environment variables:
-   \`\`\`bash
-   cp .env.example .env
-   \`\`\`
+# Or using docker-compose directly
+docker-compose up -d
 
-5. Update the `.env` file with your configuration:
-   \`\`\`env
-   # Database Configuration
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_USERNAME=postgres
-   DB_PASSWORD=your_password
-   DB_NAME=medical_clinic
+# View logs
+make logs
+\`\`\`
 
-   # Server Configuration
-   PORT=3000
-   NODE_ENV=development
+#### Development Mode
+\`\`\`bash
+# Start development containers with hot reload
+make dev
 
-   # JWT Configuration
-   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-   JWT_EXPIRES_IN=7d
-   \`\`\`
+# View development logs
+make dev-logs
+\`\`\`
 
-6. Build the project:
-   \`\`\`bash
-   npm run build
-   \`\`\`
+### 4. Verify Installation
+\`\`\`bash
+# Check container status
+make status
 
-7. Start the development server:
-   \`\`\`bash
-   npm run dev
-   \`\`\`
+# Test API health
+curl http://localhost:3000/health
 
-## API Endpoints
+# Test API readiness
+curl http://localhost:3000/ready
+\`\`\`
 
-### Authentication Routes (`/api/auth/`)
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Login and get JWT token
-- `GET /api/auth/profile` - Get current user profile (protected)
-- `POST /api/auth/change-password` - Change password (protected)
-- `POST /api/auth/refresh-token` - Refresh JWT token (protected)
+## Docker Commands
 
-### Patient Routes (`/api/patients/`)
-- `POST /api/patients` - Create a new patient (Admin/Receptionist only)
-- `GET /api/patients` - Get all patients (Admin/Receptionist/Doctor only)
-- `GET /api/patients/:id` - Get a specific patient (Owner or Staff only)
-- `PUT /api/patients/:id` - Update a patient (Owner or Staff only)
-- `DELETE /api/patients/:id` - Delete a patient (Admin only)
+### Using Makefile (Recommended)
+\`\`\`bash
+# View all available commands
+make help
 
-### Doctor Routes (`/api/doctors/`)
-- `POST /api/doctors` - Create a new doctor (Admin only)
-- `GET /api/doctors` - Get all doctors (Authenticated users)
-- `GET /api/doctors/:id` - Get a specific doctor (Owner or Staff only)
-- `PUT /api/doctors/:id` - Update a doctor (Owner or Staff only)
-- `DELETE /api/doctors/:id` - Delete a doctor (Admin only)
+# Production commands
+make build      # Build Docker images
+make up         # Start production containers
+make down       # Stop production containers
+make logs       # View production logs
+make rebuild    # Rebuild and restart containers
 
-### Appointment Routes (`/api/appointments/`)
-- `POST /api/appointments` - Create a new appointment (Admin/Receptionist/Patient)
-- `GET /api/appointments` - Get all appointments (Admin/Receptionist/Doctor)
-- `GET /api/appointments/:id` - Get a specific appointment (Authenticated users)
-- `GET /api/appointments/doctor/:doctorId` - Get appointments for a doctor
-- `GET /api/appointments/patient/:patientId` - Get appointments for a patient
-- `PUT /api/appointments/:id` - Update an appointment (Admin/Receptionist/Doctor)
-- `DELETE /api/appointments/:id` - Delete an appointment (Admin/Receptionist)
+# Development commands
+make dev        # Start development containers
+make dev-down   # Stop development containers
+make dev-logs   # View development logs
 
-## Complete API Testing Examples
+# Utility commands
+make clean      # Clean up containers and volumes
+make status     # Show container status
+make shell-api  # Access API container shell
+make shell-db   # Access database container shell
+\`\`\`
 
-### 1. Authentication Examples
+### Using Docker Compose Directly
+\`\`\`bash
+# Production
+docker-compose up -d
+docker-compose down
+docker-compose logs -f
 
-#### 1.1 Register a New Admin User
+# Development
+docker-compose -f docker-compose.dev.yml up -d
+docker-compose -f docker-compose.dev.yml down
+docker-compose -f docker-compose.dev.yml logs -f
+\`\`\`
+
+### Using npm Scripts
+\`\`\`bash
+npm run docker:up      # Start production containers
+npm run docker:down    # Stop production containers
+npm run docker:dev     # Start development containers
+npm run docker:logs    # View logs
+npm run docker:clean   # Clean up everything
+\`\`\`
+
+## Container Architecture
+
+### Services
+1. **PostgreSQL Container**
+   - Image: `postgres:15-alpine`
+   - Port: `5432` (mapped to host `5432` or `5433` for dev)
+   - Volume: Persistent data storage
+   - Health checks: Built-in PostgreSQL health checks
+
+2. **API Container**
+   - Base: `node:22-alpine`
+   - Port: `3000`
+   - Multi-stage build (development/production)
+   - Health checks: HTTP endpoint monitoring
+   - Graceful shutdown handling
+
+### Networking
+- Custom bridge network for service communication
+- Services communicate using service names
+- External access via mapped ports
+
+## Environment Variables
+
+### Required Variables
+\`\`\`env
+# Database Configuration
+DB_HOST=postgres
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=your_secure_password
+DB_NAME=medical_clinic
+
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_EXPIRES_IN=7d
+
+# Server Configuration
+PORT=3000
+NODE_ENV=production
+\`\`\`
+
+### Optional Variables
+\`\`\`env
+# Port mapping
+API_PORT=3000
+
+# Development database
+DB_NAME=medical_clinic_dev
+\`\`\`
+
+## Development Workflow
+
+### 1. Start Development Environment
+\`\`\`bash
+make dev
+\`\`\`
+
+### 2. View Logs
+\`\`\`bash
+make dev-logs
+\`\`\`
+
+### 3. Access Containers
+\`\`\`bash
+# API container shell
+make shell-api-dev
+
+# Database shell
+make shell-db-dev
+\`\`\`
+
+### 4. Code Changes
+- Code changes are automatically reflected (hot reload)
+- TypeScript compilation happens in real-time
+- Database schema changes sync automatically in development
+
+## Production Deployment
+
+### 1. Build Production Images
+\`\`\`bash
+make build
+\`\`\`
+
+### 2. Start Production Services
+\`\`\`bash
+make up
+\`\`\`
+
+### 3. Monitor Health
+\`\`\`bash
+# Check container status
+docker-compose ps
+
+# Monitor logs
+make logs
+
+# Health check
+curl http://localhost:3000/health
+\`\`\`
+
+## Database Management
+
+### Backup Database
+\`\`\`bash
+make db-backup
+\`\`\`
+
+### Restore Database
+\`\`\`bash
+make db-restore FILE=backup_20240101_120000.sql
+\`\`\`
+
+### Access Database
+\`\`\`bash
+# Production
+make shell-db
+
+# Development
+make shell-db-dev
+\`\`\`
+
+## Health Checks
+
+### API Health Check
+\`\`\`bash
+curl http://localhost:3000/health
+\`\`\`
+
+**Response:**
+\`\`\`json
+{
+  "status": "OK",
+  "message": "Medical Clinic API is running",
+  "timestamp": "2024-01-01T12:00:00.000Z",
+  "environment": "production",
+  "version": "1.0.0"
+}
+\`\`\`
+
+### API Readiness Check
+\`\`\`bash
+curl http://localhost:3000/ready
+\`\`\`
+
+**Response:**
+\`\`\`json
+{
+  "status": "READY",
+  "message": "API is ready to serve requests",
+  "database": "connected"
+}
+\`\`\`
+
+## Troubleshooting
+
+### Common Issues
+
+#### 1. Database Connection Failed
+\`\`\`bash
+# Check if PostgreSQL container is running
+docker-compose ps
+
+# Check PostgreSQL logs
+docker-compose logs postgres
+
+# Restart containers
+make rebuild
+\`\`\`
+
+#### 2. Port Already in Use
+\`\`\`bash
+# Change port in .env file
+API_PORT=3001
+DB_PORT=5433
+
+# Restart containers
+make down && make up
+\`\`\`
+
+#### 3. Permission Issues
+\`\`\`bash
+# Clean up and rebuild
+make clean
+make rebuild
+\`\`\`
+
+### Logs and Debugging
+\`\`\`bash
+# View all logs
+make logs
+
+# View specific service logs
+docker-compose logs api
+docker-compose logs postgres
+
+# Follow logs in real-time
+docker-compose logs -f api
+\`\`\`
+
+## API Testing with Docker
+
+Once the containers are running, you can test the API using the same curl commands as before, but make sure to use the correct port:
+
+### 1. Register a User
 \`\`\`bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -126,58 +346,7 @@ curl -X POST http://localhost:3000/api/auth/register \
   }'
 \`\`\`
 
-#### 1.2 Register a New Doctor
-\`\`\`bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "dr.smith@clinic.com",
-    "password": "doctor123456",
-    "firstName": "Jane",
-    "lastName": "Smith",
-    "role": "doctor",
-    "profileData": {
-      "phone": "+1234567891",
-      "specialization": "Cardiology",
-      "licenseNumber": "MD123456",
-      "yearsOfExperience": 10
-    }
-  }'
-\`\`\`
-
-#### 1.3 Register a New Patient
-\`\`\`bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "john.doe@email.com",
-    "password": "patient123456",
-    "firstName": "John",
-    "lastName": "Doe",
-    "role": "patient",
-    "profileData": {
-      "phone": "+1234567890",
-      "dateOfBirth": "1990-01-01",
-      "address": "123 Main St, City, State",
-      "medicalHistory": "No known allergies"
-    }
-  }'
-\`\`\`
-
-#### 1.4 Register a Receptionist
-\`\`\`bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "receptionist@clinic.com",
-    "password": "receptionist123456",
-    "firstName": "Mary",
-    "lastName": "Johnson",
-    "role": "receptionist"
-  }'
-\`\`\`
-
-#### 1.5 Login (Get JWT Token)
+### 2. Login and Get Token
 \`\`\`bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -187,427 +356,35 @@ curl -X POST http://localhost:3000/api/auth/login \
   }'
 \`\`\`
 
-**Response:**
-\`\`\`json
-{
-  "message": "Login successful",
-  "data": {
-    "user": {
-      "id": "uuid-here",
-      "email": "admin@clinic.com",
-      "firstName": "Admin",
-      "lastName": "User",
-      "role": "admin"
-    },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-  }
-}
-\`\`\`
-
-#### 1.6 Get Current User Profile
-\`\`\`bash
-curl -X GET http://localhost:3000/api/auth/profile \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
-
-#### 1.7 Change Password
-\`\`\`bash
-curl -X POST http://localhost:3000/api/auth/change-password \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "currentPassword": "admin123456",
-    "newPassword": "newpassword123456"
-  }'
-\`\`\`
-
-#### 1.8 Refresh Token
-\`\`\`bash
-curl -X POST http://localhost:3000/api/auth/refresh-token \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
-
-### 2. Patient Management Examples
-
-**Note:** Replace `YOUR_JWT_TOKEN` with the actual token received from login.
-
-#### 2.1 Create a Patient (Admin/Receptionist only)
-\`\`\`bash
-curl -X POST http://localhost:3000/api/patients \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "firstName": "Alice",
-    "lastName": "Johnson",
-    "email": "alice.johnson@email.com",
-    "phone": "+1234567892",
-    "dateOfBirth": "1985-05-15",
-    "address": "456 Oak Ave, City, State",
-    "medicalHistory": "Diabetes Type 2"
-  }'
-\`\`\`
-
-#### 2.2 Get All Patients (Admin/Receptionist/Doctor only)
+### 3. Test Protected Endpoints
 \`\`\`bash
 curl -X GET http://localhost:3000/api/patients \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 \`\`\`
 
-#### 2.3 Get Specific Patient
-\`\`\`bash
-curl -X GET http://localhost:3000/api/patients/PATIENT_ID \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+## Security Considerations
 
-#### 2.4 Update Patient
-\`\`\`bash
-curl -X PUT http://localhost:3000/api/patients/PATIENT_ID \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "phone": "+1234567899",
-    "address": "789 New Street, City, State",
-    "medicalHistory": "Diabetes Type 2, Hypertension"
-  }'
-\`\`\`
+- Change default passwords in production
+- Use strong JWT secrets
+- Enable SSL/TLS in production
+- Regularly update Docker images
+- Monitor container logs
+- Implement proper backup strategies
 
-#### 2.5 Delete Patient (Admin only)
-\`\`\`bash
-curl -X DELETE http://localhost:3000/api/patients/PATIENT_ID \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+## Performance Optimization
 
-### 3. Doctor Management Examples
+- Database connection pooling configured
+- Multi-stage Docker builds for smaller images
+- Health checks for container orchestration
+- Graceful shutdown handling
+- Resource limits can be configured in docker-compose.yml
 
-#### 3.1 Create a Doctor (Admin only)
-\`\`\`bash
-curl -X POST http://localhost:3000/api/doctors \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "firstName": "Michael",
-    "lastName": "Brown",
-    "email": "dr.brown@clinic.com",
-    "phone": "+1234567893",
-    "specialization": "Neurology",
-    "licenseNumber": "MD789012",
-    "yearsOfExperience": 15
-  }'
-\`\`\`
+## Monitoring and Logging
 
-#### 3.2 Get All Doctors
-\`\`\`bash
-curl -X GET http://localhost:3000/api/doctors \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+- Container health checks
+- Application health endpoints
+- Structured logging
+- Log aggregation ready
+- Metrics collection ready
 
-#### 3.3 Get Specific Doctor
-\`\`\`bash
-curl -X GET http://localhost:3000/api/doctors/DOCTOR_ID \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
-
-#### 3.4 Update Doctor
-\`\`\`bash
-curl -X PUT http://localhost:3000/api/doctors/DOCTOR_ID \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "phone": "+1234567894",
-    "yearsOfExperience": 16,
-    "specialization": "Neurology and Pain Management"
-  }'
-\`\`\`
-
-#### 3.5 Delete Doctor (Admin only)
-\`\`\`bash
-curl -X DELETE http://localhost:3000/api/doctors/DOCTOR_ID \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
-
-### 4. Appointment Management Examples
-
-#### 4.1 Create an Appointment
-\`\`\`bash
-curl -X POST http://localhost:3000/api/appointments \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "patientId": "PATIENT_UUID",
-    "doctorId": "DOCTOR_UUID",
-    "appointmentDateTime": "2024-02-15T10:00:00Z",
-    "reason": "Regular checkup",
-    "duration": 30,
-    "notes": "Patient reports feeling well"
-  }'
-\`\`\`
-
-#### 4.2 Get All Appointments (Admin/Receptionist/Doctor only)
-\`\`\`bash
-curl -X GET http://localhost:3000/api/appointments \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
-
-#### 4.3 Get Specific Appointment
-\`\`\`bash
-curl -X GET http://localhost:3000/api/appointments/APPOINTMENT_ID \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
-
-#### 4.4 Get Appointments for a Specific Doctor
-\`\`\`bash
-curl -X GET http://localhost:3000/api/appointments/doctor/DOCTOR_ID \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
-
-#### 4.5 Get Appointments for a Specific Patient
-\`\`\`bash
-curl -X GET http://localhost:3000/api/appointments/patient/PATIENT_ID \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
-
-#### 4.6 Update Appointment
-\`\`\`bash
-curl -X PUT http://localhost:3000/api/appointments/APPOINTMENT_ID \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "appointmentDateTime": "2024-02-15T14:00:00Z",
-    "status": "completed",
-    "notes": "Patient checkup completed. All vitals normal."
-  }'
-\`\`\`
-
-#### 4.7 Delete Appointment (Admin/Receptionist only)
-\`\`\`bash
-curl -X DELETE http://localhost:3000/api/appointments/APPOINTMENT_ID \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
-
-### 5. Health Check
-
-#### 5.1 Check API Health (No authentication required)
-\`\`\`bash
-curl -X GET http://localhost:3000/health
-\`\`\`
-
-**Response:**
-\`\`\`json
-{
-  "status": "OK",
-  "message": "Medical Clinic API is running"
-}
-\`\`\`
-
-## Testing Workflow Example
-
-Here's a complete workflow to test the API:
-
-### Step 1: Register Users
-\`\`\`bash
-# Register Admin
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@clinic.com",
-    "password": "admin123456",
-    "firstName": "Admin",
-    "lastName": "User",
-    "role": "admin"
-  }'
-
-# Register Doctor
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "dr.smith@clinic.com",
-    "password": "doctor123456",
-    "firstName": "Jane",
-    "lastName": "Smith",
-    "role": "doctor",
-    "profileData": {
-      "phone": "+1234567891",
-      "specialization": "Cardiology",
-      "licenseNumber": "MD123456",
-      "yearsOfExperience": 10
-    }
-  }'
-
-# Register Patient
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "john.doe@email.com",
-    "password": "patient123456",
-    "firstName": "John",
-    "lastName": "Doe",
-    "role": "patient",
-    "profileData": {
-      "phone": "+1234567890",
-      "dateOfBirth": "1990-01-01",
-      "address": "123 Main St, City, State"
-    }
-  }'
-\`\`\`
-
-### Step 2: Login and Get Tokens
-\`\`\`bash
-# Login as Admin
-ADMIN_TOKEN=$(curl -s -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@clinic.com",
-    "password": "admin123456"
-  }' | jq -r '.data.token')
-
-# Login as Doctor
-DOCTOR_TOKEN=$(curl -s -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "dr.smith@clinic.com",
-    "password": "doctor123456"
-  }' | jq -r '.data.token')
-
-# Login as Patient
-PATIENT_TOKEN=$(curl -s -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "john.doe@email.com",
-    "password": "patient123456"
-  }' | jq -r '.data.token')
-\`\`\`
-
-### Step 3: Test CRUD Operations
-\`\`\`bash
-# Get all doctors (using admin token)
-curl -X GET http://localhost:3000/api/doctors \
-  -H "Authorization: Bearer $ADMIN_TOKEN"
-
-# Get all patients (using doctor token)
-curl -X GET http://localhost:3000/api/patients \
-  -H "Authorization: Bearer $DOCTOR_TOKEN"
-
-# Create appointment (using patient token)
-curl -X POST http://localhost:3000/api/appointments \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $PATIENT_TOKEN" \
-  -d '{
-    "patientId": "PATIENT_UUID_FROM_REGISTRATION",
-    "doctorId": "DOCTOR_UUID_FROM_REGISTRATION",
-    "appointmentDateTime": "2024-02-15T10:00:00Z",
-    "reason": "Regular checkup"
-  }'
-\`\`\`
-
-## Error Responses
-
-The API returns structured error responses:
-
-### Validation Error (400)
-\`\`\`json
-{
-  "message": "Validation failed",
-  "errors": [
-    {
-      "property": "email",
-      "constraints": {
-        "isEmail": "Please provide a valid email address"
-      }
-    }
-  ]
-}
-\`\`\`
-
-### Authentication Error (401)
-\`\`\`json
-{
-  "message": "Invalid or expired token"
-}
-\`\`\`
-
-### Authorization Error (403)
-\`\`\`json
-{
-  "message": "Insufficient permissions"
-}
-\`\`\`
-
-### Not Found Error (404)
-\`\`\`json
-{
-  "message": "Patient not found"
-}
-\`\`\`
-
-### Server Error (500)
-\`\`\`json
-{
-  "message": "Internal Server Error",
-  "error": "Database connection failed"
-}
-\`\`\`
-
-## Database Schema
-
-The API uses four main entities:
-
-- **User**: Authentication and authorization
-- **Patient**: Patient information and medical history
-- **Doctor**: Doctor profiles and specializations
-- **Appointment**: Links patients and doctors with scheduling information
-
-## Security Features
-
-- **Password hashing** with bcryptjs (12 rounds)
-- **JWT token authentication** with configurable expiration
-- **Role-based access control** (RBAC)
-- **Input validation** using class-validator
-- **SQL injection protection** via TypeORM
-- **CORS protection** enabled
-- **Helmet security headers** applied
-
-## Environment Variables
-
-Create a `.env` file in the root directory:
-
-\`\`\`env
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=your_password
-DB_NAME=medical_clinic
-
-# Server Configuration
-PORT=3000
-NODE_ENV=development
-
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-JWT_EXPIRES_IN=7d
-\`\`\`
-
-## Development
-
-\`\`\`bash
-# Install dependencies
-npm install
-
-# Run in development mode
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-\`\`\`
-
-## Notes
-
-- Replace `YOUR_JWT_TOKEN` with actual tokens from login responses
-- Replace UUID placeholders (`PATIENT_ID`, `DOCTOR_ID`, etc.) with actual UUIDs
-- All timestamps should be in ISO 8601 format
-- The API uses UUID v4 for all entity IDs
-- Passwords are automatically hashed before storage
-- JWT tokens expire based on the `JWT_EXPIRES_IN` environment variable
+For more detailed API documentation and testing examples, see the API Testing section above.

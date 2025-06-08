@@ -1,0 +1,62 @@
+# version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: medical-clinic-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-medical_clinic}
+      POSTGRES_USER: ${DB_USERNAME:-u_teste_api}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-connect123!}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - medical-clinic-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-u_teste_api} -d ${DB_NAME:-medical_clinic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: medical-clinic-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME:-u_teste_api}
+      DB_PASSWORD: ${DB_PASSWORD:-connect123!}
+      DB_NAME: ${DB_NAME:-medical_clinic}
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-this-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      PORT: 3000
+    ports:
+      - "${API_PORT:-3000}:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - medical-clinic-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  medical-clinic-network:
+    driver: bridge

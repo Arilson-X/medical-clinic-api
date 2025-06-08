@@ -1,0 +1,55 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build outputs
+dist
+build
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+docs
+
+# Docker files
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# IDE files
+.vscode
+.idea
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Temporary folders
+tmp
+temp
