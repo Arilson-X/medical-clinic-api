@@ -9,8 +9,6 @@ A RESTful API for managing a medical clinic built with Node.js, Express, TypeORM
 - **Appointment Scheduling**: Book and manage appointments between patients and doctors
 - **JWT Authentication**: Secure authentication with role-based access control
 - **Data Validation**: Comprehensive input validation using class-validator
-- **Error Handling**: Proper error handling and meaningful error messages
-- **Database Relations**: Well-structured relationships between entities
 
 ## Tech Stack
 
