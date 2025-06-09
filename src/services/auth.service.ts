@@ -69,23 +69,39 @@ export class AuthService {
     let profileId: string | undefined
 
     if (userData.role === UserRole.PATIENT && userData.profileData) {
-      const patient = this.patientRepository.create({
+      const patientData = {
         ...userData.profileData,
         firstName: userData.firstName,
         lastName: userData.lastName,
         email: userData.email,
-      })
-      const savedPatient = await this.patientRepository.save(patient)
-      profileId = savedPatient.id
+      }
+
+      const patient = this.patientRepository.create(patientData)
+      const savedPatientResult = await this.patientRepository.save(patient)
+
+      // Extract the patient entity and get its ID
+      const savedPatient = Array.isArray(savedPatientResult) ? savedPatientResult[0] : savedPatientResult
+
+      if (savedPatient && "id" in savedPatient) {
+        profileId = savedPatient.id
+      }
     } else if (userData.role === UserRole.DOCTOR && userData.profileData) {
-      const doctor = this.doctorRepository.create({
+      const doctorData = {
         ...userData.profileData,
         firstName: userData.firstName,
         lastName: userData.lastName,
         email: userData.email,
-      })
-      const savedDoctor = await this.doctorRepository.save(doctor)
-      profileId = savedDoctor.id
+      }
+
+      const doctor = this.doctorRepository.create(doctorData)
+      const savedDoctorResult = await this.doctorRepository.save(doctor)
+
+      // Extract the doctor entity and get its ID
+      const savedDoctor = Array.isArray(savedDoctorResult) ? savedDoctorResult[0] : savedDoctorResult
+
+      if (savedDoctor && "id" in savedDoctor) {
+        profileId = savedDoctor.id
+      }
     }
 
     // Update user with profileId
@@ -154,7 +170,7 @@ export class AuthService {
 
   generateToken(payload: JWTPayload): string {
     return jwt.sign(payload, this.jwtSecret, {
-      expiresIn: "1h",
+      expiresIn:  "7d",
     })
   }
 
