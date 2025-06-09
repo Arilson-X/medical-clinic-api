@@ -36,19 +36,19 @@ The API uses JWT (JSON Web Token) for authentication. All endpoints except regis
 
 1. Clone the repository
 2. Install dependencies:
-   \`\`\`bash
+   ```bash
    npm install
-   \`\`\`
+   ```
 
 3. Set up your PostgreSQL database
 
 4. Copy `.env.example` to `.env` and configure your environment variables:
-   \`\`\`bash
+   ```bash
    cp .env.example .env
-   \`\`\`
+   ```
 
 5. Update the `.env` file with your configuration:
-   \`\`\`env
+   ```env
    # Database Configuration
    DB_HOST=localhost
    DB_PORT=5432
@@ -63,17 +63,17 @@ The API uses JWT (JSON Web Token) for authentication. All endpoints except regis
    # JWT Configuration
    JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
    JWT_EXPIRES_IN=7d
-   \`\`\`
+   ```
 
 6. Build the project:
-   \`\`\`bash
+   ```bash
    npm run build
-   \`\`\`
+   ```
 
 7. Start the development server:
-   \`\`\`bash
+   ```bash
    npm run dev
-   \`\`\`
+   ```
 
 ## API Endpoints
 
@@ -112,7 +112,7 @@ The API uses JWT (JSON Web Token) for authentication. All endpoints except regis
 ### 1. Authentication Examples
 
 #### 1.1 Register a New Admin User
-\`\`\`bash
+```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
@@ -122,10 +122,10 @@ curl -X POST http://localhost:3000/api/auth/register \
     "lastName": "User",
     "role": "admin"
   }'
-\`\`\`
+```
 
 #### 1.2 Register a New Doctor
-\`\`\`bash
+```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
@@ -141,10 +141,10 @@ curl -X POST http://localhost:3000/api/auth/register \
       "yearsOfExperience": 10
     }
   }'
-\`\`\`
+```
 
 #### 1.3 Register a New Patient
-\`\`\`bash
+```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
@@ -160,10 +160,10 @@ curl -X POST http://localhost:3000/api/auth/register \
       "medicalHistory": "No known allergies"
     }
   }'
-\`\`\`
+```
 
 #### 1.4 Register a Receptionist
-\`\`\`bash
+```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
@@ -173,20 +173,20 @@ curl -X POST http://localhost:3000/api/auth/register \
     "lastName": "Johnson",
     "role": "receptionist"
   }'
-\`\`\`
+```
 
 #### 1.5 Login (Get JWT Token)
-\`\`\`bash
+```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "admin@clinic.com",
     "password": "admin123456"
   }'
-\`\`\`
+```
 
 **Response:**
-\`\`\`json
+```json
 {
   "message": "Login successful",
   "data": {
@@ -200,16 +200,16 @@ curl -X POST http://localhost:3000/api/auth/login \
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }
 }
-\`\`\`
+```
 
 #### 1.6 Get Current User Profile
-\`\`\`bash
+```bash
 curl -X GET http://localhost:3000/api/auth/profile \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 #### 1.7 Change Password
-\`\`\`bash
+```bash
 curl -X POST http://localhost:3000/api/auth/change-password \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -217,20 +217,20 @@ curl -X POST http://localhost:3000/api/auth/change-password \
     "currentPassword": "admin123456",
     "newPassword": "newpassword123456"
   }'
-\`\`\`
+```
 
 #### 1.8 Refresh Token
-\`\`\`bash
+```bash
 curl -X POST http://localhost:3000/api/auth/refresh-token \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 ### 2. Patient Management Examples
 
 **Note:** Replace `YOUR_JWT_TOKEN` with the actual token received from login.
 
 #### 2.1 Create a Patient (Admin/Receptionist only)
-\`\`\`bash
+```bash
 curl -X POST http://localhost:3000/api/patients \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -243,22 +243,22 @@ curl -X POST http://localhost:3000/api/patients \
     "address": "456 Oak Ave, City, State",
     "medicalHistory": "Diabetes Type 2"
   }'
-\`\`\`
+```
 
 #### 2.2 Get All Patients (Admin/Receptionist/Doctor only)
-\`\`\`bash
+```bash
 curl -X GET http://localhost:3000/api/patients \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 #### 2.3 Get Specific Patient
-\`\`\`bash
+```bash
 curl -X GET http://localhost:3000/api/patients/PATIENT_ID \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 #### 2.4 Update Patient
-\`\`\`bash
+```bash
 curl -X PUT http://localhost:3000/api/patients/PATIENT_ID \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -267,18 +267,18 @@ curl -X PUT http://localhost:3000/api/patients/PATIENT_ID \
     "address": "789 New Street, City, State",
     "medicalHistory": "Diabetes Type 2, Hypertension"
   }'
-\`\`\`
+```
 
 #### 2.5 Delete Patient (Admin only)
-\`\`\`bash
+```bash
 curl -X DELETE http://localhost:3000/api/patients/PATIENT_ID \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 ### 3. Doctor Management Examples
 
 #### 3.1 Create a Doctor (Admin only)
-\`\`\`bash
+```bash
 curl -X POST http://localhost:3000/api/doctors \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -291,22 +291,22 @@ curl -X POST http://localhost:3000/api/doctors \
     "licenseNumber": "MD789012",
     "yearsOfExperience": 15
   }'
-\`\`\`
+```
 
 #### 3.2 Get All Doctors
-\`\`\`bash
+```bash
 curl -X GET http://localhost:3000/api/doctors \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 #### 3.3 Get Specific Doctor
-\`\`\`bash
+```bash
 curl -X GET http://localhost:3000/api/doctors/DOCTOR_ID \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 #### 3.4 Update Doctor
-\`\`\`bash
+```bash
 curl -X PUT http://localhost:3000/api/doctors/DOCTOR_ID \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -315,18 +315,18 @@ curl -X PUT http://localhost:3000/api/doctors/DOCTOR_ID \
     "yearsOfExperience": 16,
     "specialization": "Neurology and Pain Management"
   }'
-\`\`\`
+```
 
 #### 3.5 Delete Doctor (Admin only)
-\`\`\`bash
+```bash
 curl -X DELETE http://localhost:3000/api/doctors/DOCTOR_ID \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 ### 4. Appointment Management Examples
 
 #### 4.1 Create an Appointment
-\`\`\`bash
+```bash
 curl -X POST http://localhost:3000/api/appointments \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -338,34 +338,34 @@ curl -X POST http://localhost:3000/api/appointments \
     "duration": 30,
     "notes": "Patient reports feeling well"
   }'
-\`\`\`
+```
 
 #### 4.2 Get All Appointments (Admin/Receptionist/Doctor only)
-\`\`\`bash
+```bash
 curl -X GET http://localhost:3000/api/appointments \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 #### 4.3 Get Specific Appointment
-\`\`\`bash
+```bash
 curl -X GET http://localhost:3000/api/appointments/APPOINTMENT_ID \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 #### 4.4 Get Appointments for a Specific Doctor
-\`\`\`bash
+```bash
 curl -X GET http://localhost:3000/api/appointments/doctor/DOCTOR_ID \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 #### 4.5 Get Appointments for a Specific Patient
-\`\`\`bash
+```bash
 curl -X GET http://localhost:3000/api/appointments/patient/PATIENT_ID \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 #### 4.6 Update Appointment
-\`\`\`bash
+```bash
 curl -X PUT http://localhost:3000/api/appointments/APPOINTMENT_ID \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -374,35 +374,35 @@ curl -X PUT http://localhost:3000/api/appointments/APPOINTMENT_ID \
     "status": "completed",
     "notes": "Patient checkup completed. All vitals normal."
   }'
-\`\`\`
+```
 
 #### 4.7 Delete Appointment (Admin/Receptionist only)
-\`\`\`bash
+```bash
 curl -X DELETE http://localhost:3000/api/appointments/APPOINTMENT_ID \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
-\`\`\`
+```
 
 ### 5. Health Check
 
 #### 5.1 Check API Health (No authentication required)
-\`\`\`bash
+```bash
 curl -X GET http://localhost:3000/health
-\`\`\`
+```
 
 **Response:**
-\`\`\`json
+```json
 {
   "status": "OK",
   "message": "Medical Clinic API is running"
 }
-\`\`\`
+```
 
 ## Testing Workflow Example
 
 Here's a complete workflow to test the API:
 
 ### Step 1: Register Users
-\`\`\`bash
+```bash
 # Register Admin
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -446,10 +446,10 @@ curl -X POST http://localhost:3000/api/auth/register \
       "address": "123 Main St, City, State"
     }
   }'
-\`\`\`
+```
 
 ### Step 2: Login and Get Tokens
-\`\`\`bash
+```bash
 # Login as Admin
 ADMIN_TOKEN=$(curl -s -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -473,10 +473,10 @@ PATIENT_TOKEN=$(curl -s -X POST http://localhost:3000/api/auth/login \
     "email": "john.doe@email.com",
     "password": "patient123456"
   }' | jq -r '.data.token')
-\`\`\`
+```
 
 ### Step 3: Test CRUD Operations
-\`\`\`bash
+```bash
 # Get all doctors (using admin token)
 curl -X GET http://localhost:3000/api/doctors \
   -H "Authorization: Bearer $ADMIN_TOKEN"
@@ -495,14 +495,14 @@ curl -X POST http://localhost:3000/api/appointments \
     "appointmentDateTime": "2024-02-15T10:00:00Z",
     "reason": "Regular checkup"
   }'
-\`\`\`
+```
 
 ## Error Responses
 
 The API returns structured error responses:
 
 ### Validation Error (400)
-\`\`\`json
+```json
 {
   "message": "Validation failed",
   "errors": [
@@ -514,36 +514,36 @@ The API returns structured error responses:
     }
   ]
 }
-\`\`\`
+```
 
 ### Authentication Error (401)
-\`\`\`json
+```json
 {
   "message": "Invalid or expired token"
 }
-\`\`\`
+```
 
 ### Authorization Error (403)
-\`\`\`json
+```json
 {
   "message": "Insufficient permissions"
 }
-\`\`\`
+```
 
 ### Not Found Error (404)
-\`\`\`json
+```json
 {
   "message": "Patient not found"
 }
-\`\`\`
+```
 
 ### Server Error (500)
-\`\`\`json
+```json
 {
   "message": "Internal Server Error",
   "error": "Database connection failed"
 }
-\`\`\`
+```
 
 ## Database Schema
 
@@ -568,7 +568,7 @@ The API uses four main entities:
 
 Create a `.env` file in the root directory:
 
-\`\`\`env
+```env
 # Database Configuration
 DB_HOST=localhost
 DB_PORT=5432
@@ -583,11 +583,11 @@ NODE_ENV=development
 # JWT Configuration
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 JWT_EXPIRES_IN=7d
-\`\`\`
+```
 
 ## Development
 
-\`\`\`bash
+```bash
 # Install dependencies
 npm install
 
@@ -599,7 +599,7 @@ npm run build
 
 # Start production server
 npm start
-\`\`\`
+```
 
 ## Notes
 
